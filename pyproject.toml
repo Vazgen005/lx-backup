@@ -26,7 +26,7 @@ python scripts/ignore-types.py src/UIs/FolderSelection.py
 start = "python3 -m src.rosa_backup"
 
 [project.scripts]
-rosa-backup = "rosa_backup"
+rosa-backup = "rosa_backup:main"
 
 [tool.poe.tasks.dev]
 sequence = ["build", "start"]
