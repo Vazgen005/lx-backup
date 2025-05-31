@@ -23,10 +23,10 @@ python scripts/ignore-types.py src/UIs/MainWindow.py
 python scripts/ignore-types.py src/UIs/BackupingDialog.py
 python scripts/ignore-types.py src/UIs/FolderSelection.py
 """
-start = "python src/main.py"
+start = "python3 -m src.rosa_backup"
 
 [project.scripts]
-rosa-backup = "rosa_backup:main"
+rosa-backup = "rosa_backup"
 
 [tool.poe.tasks.dev]
 sequence = ["build", "start"]

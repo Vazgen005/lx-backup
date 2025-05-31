@@ -13,7 +13,7 @@
         pythonPackages = pkgs.python3Packages;
       in {
         packages.default = pythonPackages.buildPythonPackage {
-          name = "ROSA-backup";
+          name = "lx-backup";
           version = "0.1.0";  # You should specify a version
           src = ./.;
           propagatedBuildInputs = with pythonPackages; [
@@ -26,13 +26,21 @@
           ];
         };
 
-        # Optional: Add a devShell for development
         devShells.default = pkgs.mkShell {
           buildInputs = with pythonPackages; [
             pyside6
             human-readable
             hatchling
+            pkgs.poethepoet
           ];
+        };
+
+        apps = {
+          lx-backup = {
+            type = "app";
+            program = "${self.packages.${system}.default}/bin/rosa-backup";
+          };
+          default = self.apps.${system}.lx-backup;
         };
       });
 }
