@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QDialog
 from PySide6.QtCore import QProcess, QThread, Signal
-from UIs.BackupingDialog import Ui_Dialog
+from .UIs.BackupingDialog import Ui_Dialog
 from pathlib import Path
 
 

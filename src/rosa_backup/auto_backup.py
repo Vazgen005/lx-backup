@@ -1,6 +1,6 @@
 from datetime import datetime
 from PySide6.QtCore import QThread, QProcess, Signal
-from config_manager import ConfigManager
+from .config_manager import ConfigManager
 from time import sleep
 
 
@@ -62,7 +62,7 @@ class AutoBackup(QThread):
             process.start(
                 "tar",
                 [
-                    "cvzf" if self.config_manager.compress else "cvf",
+                    "cvzf",
                     filepath,
                     *self.config_manager.get_all_paths(),
                 ],

@@ -25,6 +25,16 @@ python scripts/ignore-types.py src/UIs/FolderSelection.py
 """
 start = "python src/main.py"
 
+[project.scripts]
+rosa-backup = "rosa_backup:main"
+
 [tool.poe.tasks.dev]
 sequence = ["build", "start"]
 ignore_fail = "return_zero"
+
+[build-system]
+requires = ["hatchling"]  # or "setuptools" if you're using setuptools
+build-backend = "hatchling.build"  # or "setuptools.build_meta" for setuptools
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rosa_backup"]

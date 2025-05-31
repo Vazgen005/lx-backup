@@ -163,3 +163,4 @@ cython_debug/
 
 *_ui.py
 data.db
+result/

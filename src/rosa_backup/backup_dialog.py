@@ -5,14 +5,14 @@ from pathlib import Path
 from PySide6.QtCore import QProcess, QThread, Signal
 from PySide6.QtWidgets import QDialog
 
-from config_manager import ConfigManager
-from UIs.BackupingDialog import Ui_Dialog
+from .config_manager import ConfigManager
+from .UIs.BackupingDialog import Ui_Dialog
 
 
 class BackupThread(QThread):
     backup_log_signal = Signal(str)
 
-    def __init__(self, filepath: str, paths: list[str], compress: bool) -> None:
+    def __init__(self, filepath: str, paths: list[str]) -> None:
         """
         Инициализирует поток резервного копирования.
 
@@ -21,7 +21,6 @@ class BackupThread(QThread):
         super(BackupThread, self).__init__()
         self.filepath = filepath
         self.paths = paths
-        self.compress = compress
 
     def run(self):
         """
@@ -38,7 +37,7 @@ class BackupThread(QThread):
                 bytes(process.readAllStandardError().data()).decode().strip()
             )
         )
-        process.start("tar", ["cvzf" if self.compress else "cvf", self.filepath, *self.paths])
+        process.start("tar", ["cvzf", self.filepath, *self.paths])
         process.waitForFinished(2147483647)
 
 
@@ -49,7 +48,6 @@ class BackupDialog(QDialog):
         paths: list[str],
         config_manager: ConfigManager,
         update_table: Callable[[], None],
-        compress: bool
     ) -> None:
         """
         Инициализирует BackupDialog с указанными filepath и config_manager.
@@ -63,7 +61,7 @@ class BackupDialog(QDialog):
 
         self.ui.name_text.setText(filepath.name)
 
-        self.backup_thread = BackupThread(str(filepath), paths, compress)
+        self.backup_thread = BackupThread(str(filepath), paths)
 
         self.backup_thread.backup_log_signal.connect(self.on_backup_log)
         self.backup_thread.finished.connect(self.on_backup_finish)

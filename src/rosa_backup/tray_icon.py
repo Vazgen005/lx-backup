@@ -2,7 +2,7 @@ import sys
 from PySide6.QtWidgets import QMessageBox, QStyle, QSystemTrayIcon, QMenu, QApplication
 from PySide6.QtGui import QAction
 
-from main_window import MainWindow
+from .main_window import MainWindow
 
 
 class TrayIcon(QSystemTrayIcon):

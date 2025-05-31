@@ -3,10 +3,10 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
-from app import App
-from config_manager import ConfigManager
-from main_window import MainWindow
-from tray_icon import TrayIcon
+from .app import App
+from .config_manager import ConfigManager
+from .main_window import MainWindow
+from .tray_icon import TrayIcon
 
 
 def handle_exit(app: QApplication, main_window: MainWindow):
@@ -21,7 +21,7 @@ def handle_exit(app: QApplication, main_window: MainWindow):
     app.quit()
 
 
-def main() -> None:
+def main():
     """
     Основная функция для инициализации приложения, настройки
     главного окна и системного трея.

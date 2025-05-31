@@ -1,4 +1,3 @@
-from functools import partial
 import os
 from datetime import datetime
 from os.path import getsize
@@ -15,16 +14,14 @@ from PySide6.QtWidgets import (
     QPushButton,
     QStyle,
     QTableWidgetItem,
-    QCheckBox,
-    QHeaderView
 )
 
-from auto_backup import AutoBackup
-from backup_dialog import BackupDialog
-from config_manager import ConfigManager
-from folder_selection import FolderSelection
-from restore_dialog import RestoreDialog
-from UIs.MainWindow import Ui_MainWindow
+from .auto_backup import AutoBackup
+from .backup_dialog import BackupDialog
+from .config_manager import ConfigManager
+from .folder_selection import FolderSelection
+from .restore_dialog import RestoreDialog
+from .UIs.MainWindow import Ui_MainWindow
 
 
 class MainWindow(QMainWindow):
@@ -40,10 +37,6 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
-        self.ui.backups_table.horizontalHeader().setSectionResizeMode(
-            0,QHeaderView.ResizeMode.ResizeToContents
-        )
 
         self.config_manager = config_manager
         self.path_list: list[str] = []
@@ -62,20 +55,6 @@ class MainWindow(QMainWindow):
         self.ui.add_paths_btn2.clicked.connect(self.select_backup_paths)
         self.ui.path_list.doubleClicked.connect(self.select_backup_paths)
         self.ui.path_list2.doubleClicked.connect(self.select_backup_paths)
-        self.ui.compress_checkbox.checkStateChanged.connect(
-            partial(
-                self.set_compress_extention,
-                self.ui.backup_filename,
-                # Сюда прилетает эвент
-            )
-        )
-        self.ui.compress_checkbox_2.checkStateChanged.connect(
-            partial(
-                self.set_compress_extention,
-                self.ui.def_name_input,
-                # Сюда прилетает эвент
-            )
-        )
 
         deligate = QItemDelegate(self)
         deligate.closeEditor.connect(self.rename_backup)
@@ -137,19 +116,10 @@ class MainWindow(QMainWindow):
         """
         self.ui.path_input.setText(self.config_manager.def_path)
         self.ui.def_path_input.setText(self.config_manager.def_path)
-        print("setting def name", self.config_manager.def_name)
-        def_name = self.config_manager.def_name
-        self.ui.def_name_input.setText(def_name)
-        # self.ui.def_name_input.repaint()
-        # self.ui.def_name_input.text()
-        self.ui.backup_filename.setText(def_name)
+        self.ui.def_name_input.setText(self.config_manager.def_name)
+        self.ui.backup_filename.setText(self.config_manager.def_name)
         self.ui.interval_combo.setCurrentIndex(self.config_manager.interval)
         self.ui.autobackup_check.setChecked(self.config_manager.autobackup)
-        self.ui.compress_checkbox.setChecked(self.config_manager.compress)
-        self.ui.compress_checkbox_2.setChecked(self.config_manager.compress)
-        # self.set_compress_extention(self.ui.backup_filename, self.ui.compress_checkbox)
-        # self.set_compress_extention(self.ui.def_name_input, self.ui.compress_checkbox_2)
-
         self.path_list = self.config_manager.get_all_paths()
         if self.path_list:
             self.ui.no_dirs_warning.hide()
@@ -170,7 +140,6 @@ class MainWindow(QMainWindow):
                 self, "Ошибка", "Введены неверные данные для сохранения конфигурации"
             )
             return
-        print("Saveing config...", self.config_manager.def_name, self.ui.def_name_input.text())
         self.config_manager.def_path = self.ui.def_path_input.text()
         self.config_manager.def_name = self.ui.def_name_input.text()
         self.config_manager.interval = self.ui.interval_combo.currentIndex()
@@ -193,9 +162,7 @@ class MainWindow(QMainWindow):
                 human_readable.file_size(size),
             )
 
-    def add_row(
-        self, row: int, filename: str, filepath: str, date: str, size: str
-    ) -> None:
+    def add_row(self, row: int, filename: str, filepath: str, date: str, size: str) -> None:
         """
         Добавляет строку в таблицу резервных копий с указанными данными:
         именем файла, путем файла, датой и размером.
@@ -295,30 +262,11 @@ class MainWindow(QMainWindow):
             )
             return
         BackupDialog(
-            Path(self.ui.path_input.text())
-            / datetime.now().strftime(self.ui.backup_filename.text()),
+            Path(self.ui.path_input.text()) / datetime.now().strftime(self.ui.backup_filename.text()),
             self.path_list,
             self.config_manager,
             self.update_table,
-            self.ui.compress_checkbox.isChecked(),
         )
-
-    def set_compress_extention(
-        self, input: QLineEdit, check_state: Qt.CheckState | QCheckBox
-    ) -> None:
-        if not self.isVisible():
-            return
-        text: str = input.text()
-
-        if isinstance(check_state, QCheckBox):
-            is_checked: bool = check_state.isChecked()
-        else:
-            is_checked: bool = check_state == Qt.CheckState.Checked
-
-        if is_checked and not text.endswith(".gz"):
-            input.setText(text + ".gz")
-        else:
-            input.setText(text.removesuffix(".gz"))
 
     def select_backup_paths(self) -> None:
         fs = FolderSelection(self.config_manager)
@@ -333,9 +281,10 @@ class MainWindow(QMainWindow):
         else:
             self.ui.no_dirs_warning.show()
             self.ui.no_dirs_warning2.show()
-
+        
         self.path_list = paths
-
+        
         for path in paths:
             self.ui.path_list.addItem(path)
             self.ui.path_list2.addItem(path)
+        

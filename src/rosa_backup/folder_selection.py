@@ -8,11 +8,10 @@ from PySide6.QtWidgets import (
     QPushButton,
     QStyle,
     QTableWidgetItem,
-    QHeaderView
 )
 
-from config_manager import ConfigManager
-from UIs.FolderSelection import Ui_FolderSelection
+from .config_manager import ConfigManager
+from .UIs.FolderSelection import Ui_FolderSelection
 
 
 class FolderSelection(QDialog):
@@ -28,10 +27,6 @@ class FolderSelection(QDialog):
         self.ui.cancel_btn.clicked.connect(self.destroy)
         self.ui.save_btn.clicked.connect(self.close)
         self.ui.add_path_btn.clicked.connect(self.add_path)
-
-        self.ui.path_table.horizontalHeader().setSectionResizeMode(
-            0,QHeaderView.ResizeMode.ResizeToContents
-        )
 
     def close(self) -> bool:
         self.cross = False
@@ -55,12 +50,9 @@ class FolderSelection(QDialog):
         if clear:
             self.ui.path_table.clearContents()
         self.ui.path_table.setRowCount(len(paths))
-        # self.ui.path_table.setColumnWidth(0, 200)
         for i, path in enumerate(paths):
             self.ui.path_table.setItem(i, 0, QTableWidgetItem(path))
             del_button = QPushButton()
-            del_button.setToolTip("Удалить")
-            # del_button.setMaximumWidth(20)
             del_button.setIcon(
                 self.style().standardIcon(QStyle.StandardPixmap.SP_DialogCloseButton)
             )

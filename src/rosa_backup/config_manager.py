@@ -45,8 +45,7 @@ class ConfigManager:
                 autobackup BOOLEAN NOT NULL,
                 interval_combo_index INTEGER NOT NULL,
                 def_path TEXT NOT NULL,
-                def_name TEXT NOT NULL,
-                compress BOOLEAN NOT NULL
+                def_name TEXT NOT NULL
             )
         """)
 
@@ -74,10 +73,10 @@ class ConfigManager:
             default_path = f"/home/{getuser()}/backups"
             cursor.execute(
                 """
-                INSERT INTO settings (autobackup, interval_combo_index, def_path, def_name, compress)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO settings (autobackup, interval_combo_index, def_path, def_name)
+                VALUES (?, ?, ?, ?)
             """,
-                (False, 0, default_path, "backup-%d.%m.%Y-%H:%M:%S.tar.gz", True),
+                (False, 0, default_path, "backup-%d.%m.%Y-%H:%M:%S.tar.gz"),
             )
             self._get_conn().commit()
 
@@ -116,7 +115,7 @@ class ConfigManager:
         """Возвращает настройки из базы данных."""
         cursor = self._get_cursor()
         cursor.execute(
-            "SELECT autobackup, interval_combo_index, def_path, def_name, compress FROM settings LIMIT 1"
+            "SELECT autobackup, interval_combo_index, def_path, def_name FROM settings LIMIT 1"
         )
         row = cursor.fetchone()
         if row is None:
@@ -126,7 +125,6 @@ class ConfigManager:
             "interval_combo_index": row["interval_combo_index"],
             "def_path": row["def_path"],
             "def_name": row["def_name"],
-            "compress": bool(row["compress"]),
         }
 
     def _update_settings(self, **kwargs) -> None:
@@ -261,14 +259,6 @@ class ConfigManager:
         cursor = self._get_cursor()
         cursor.execute("SELECT COUNT(*) FROM backups")
         return cursor.fetchone()[0]
-    
-    @property
-    def compress(self) -> bool:
-        return bool(self._get_settings()["compress"])
-
-    @compress.setter
-    def compress(self, value: bool) -> None:
-        self._update_settings(compress=int(value))
 
     def close(self):
         """Закрывает все соединения с базой данных."""

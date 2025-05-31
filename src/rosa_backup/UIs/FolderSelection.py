@@ -27,8 +27,6 @@ class Ui_FolderSelection(object):
         FolderSelection.resize(507, 324)
         self.verticalLayout_2 = QVBoxLayout(FolderSelection)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout = QVBoxLayout()
-        self.verticalLayout.setObjectName(u"verticalLayout")
         self.path_table = QTableWidget(FolderSelection)
         if (self.path_table.columnCount() < 2):
             self.path_table.setColumnCount(2)
@@ -44,10 +42,7 @@ class Ui_FolderSelection(object):
         self.path_table.setSizePolicy(sizePolicy)
         self.path_table.horizontalHeader().setStretchLastSection(True)
 
-        self.verticalLayout.addWidget(self.path_table)
-
-
-        self.verticalLayout_2.addLayout(self.verticalLayout)
+        self.verticalLayout_2.addWidget(self.path_table)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
