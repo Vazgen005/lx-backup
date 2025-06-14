@@ -16,12 +16,12 @@ dev = [
 
 [tool.poe.tasks]
 build.shell = """
-pyside6-uic src/resources/UIs/MainWindow.ui -o src/UIs/MainWindow.py
-pyside6-uic src/resources/UIs/BackupingDialog.ui -o src/UIs/BackupingDialog.py
-pyside6-uic src/resources/UIs/FolderSelection.ui -o src/UIs/FolderSelection.py
-python scripts/ignore-types.py src/UIs/MainWindow.py
-python scripts/ignore-types.py src/UIs/BackupingDialog.py
-python scripts/ignore-types.py src/UIs/FolderSelection.py
+pyside6-uic src/rosa_backup/resources/UIs/MainWindow.ui -o src/rosa_backup/UIs/MainWindow.py
+pyside6-uic src/rosa_backup/resources/UIs/BackupingDialog.ui -o src/rosa_backup/UIs/BackupingDialog.py
+pyside6-uic src/rosa_backup/resources/UIs/FolderSelection.ui -o src/rosa_backup/UIs/FolderSelection.py
+python scripts/ignore-types.py src/rosa_backup/UIs/MainWindow.py
+python scripts/ignore-types.py src/rosa_backup/UIs/BackupingDialog.py
+python scripts/ignore-types.py src/rosa_backup/UIs/FolderSelection.py
 """
 start = "python3 -m src.rosa_backup"
 

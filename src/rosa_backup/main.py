@@ -27,6 +27,7 @@ def main():
     главного окна и системного трея.
     """
     app = QApplication(sys.argv)
+    app.setStyle('Fusion')
     config_manager = ConfigManager()
     main_window = MainWindow(config_manager)
     tray = TrayIcon(main_window, app)
