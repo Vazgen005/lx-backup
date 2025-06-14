@@ -15,6 +15,7 @@ class RestoreThread(QThread):
         """
         super(RestoreThread, self).__init__()
         self.filepath = filepath
+        self.exit_code = 0
 
     def run(self):
         """
@@ -34,6 +35,7 @@ class RestoreThread(QThread):
         #  tar xvf "$1" -C /
         process.start("tar", ["xvf", self.filepath, "-C", "/"])
         process.waitForFinished(2147483647)
+        self.exit_code = process.exitCode()
 
 
 class RestoreDialog(QDialog):
@@ -86,10 +88,13 @@ class RestoreDialog(QDialog):
 
     def on_restore_backup_finished(self):
         """
-        Обрабатывает событие завершения восстановления бэкапа.
+        Обрабатывает событие завершения восстановления копии.
 
         :param dialog: экземпляр класса RestoreDialog
         :return: None
         """
         self.ui.close_btn.setEnabled(True)
+        if self.restore_thread.exit_code != 0:  # Проверяем статус востановления
+            self.ui.textEdit.append("Oшибка восстановления резервной копии")
+            return
         self.ui.textEdit.append("Готово")

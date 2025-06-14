@@ -21,6 +21,7 @@ class BackupThread(QThread):
         super(BackupThread, self).__init__()
         self.filepath = filepath
         self.paths = paths
+        self.exit_code = 0
 
     def run(self):
         """
@@ -39,6 +40,7 @@ class BackupThread(QThread):
         )
         process.start("tar", ["cvzf", self.filepath, *self.paths])
         process.waitForFinished(2147483647)
+        self.exit_code = process.exitCode()
 
 
 class BackupDialog(QDialog):
@@ -89,11 +91,18 @@ class BackupDialog(QDialog):
     def on_backup_finish(self) -> None:
         try:
             file_size = self.filepath.stat().st_size
-        except FileNotFoundError:
+        except (
+            FileNotFoundError
+        ):  # Проверка на наличие резервной копии после завершения
             self.ui.close_btn.setEnabled(True)
-            self.ui.textEdit.append("\nOшибка создания резервной копии")
+            self.ui.textEdit.append("Oшибка создания резервной копии")
             return
-        self.config_manager.add_backup(
+
+        if self.backup_thread.exit_code != 0:  # Проверка статуса резервной копии
+            self.ui.textEdit.append("Oшибка создания резервной копии")
+            return
+        
+        self.config_manager.add_backup(  # Добавление записи о резервной копии в базу данных
             self.filepath.name,
             str(self.filepath),
             datetime.now().isoformat(),
